@@ -205,3 +205,7 @@ _.pollute.enable = function() {
 
 exports._ = _;
 exports.__ = __;
+exports.install = function(reg, batch) {
+  global[reg] = _;
+  global[batch] = __;
+}
