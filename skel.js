@@ -1,10 +1,16 @@
-var _;
+var _, __;
 _ = function(value) {
   if (arguments.length > 1) {
-    value = Array.prototype.split(arguments);
+    value = Array.prototype.slice.call(arguments);
   }
   return new _.__oop__(value);
 };
+
+__ = function() {
+  var args = (arguments.length === 1 && toString.call(arguments[0]) === "[object Array]") ?
+        arguments[0] : Array.prototype.slice.call(arguments);
+  return new _.__oop__list__(args);
+}
 
 _.ARRAY = "array";
 _.OBJECT = "object";
@@ -66,11 +72,12 @@ _.__oop__ = function(value) {
       if (typeof _[util] === "function") {
         this[util] = _.chain ?
           function() {
-            return _(_[util].apply(this, [value].concat(Array.prototype.slice.call(arguments))));
+            return _(_[arguments.callee.util].apply(this, [value].concat(Array.prototype.slice.call(arguments))));
           } :
           function() {
-            return _[util].apply(this, [value].concat(Array.prototype.slice.call(arguments)));
+            return _[arguments.callee.util].apply(this, [value].concat(Array.prototype.slice.call(arguments)));
           };
+        this[util].util = util;
       }
     }
     if (_.chain) {
@@ -78,6 +85,35 @@ _.__oop__ = function(value) {
     }
   }
 }
+
+_.__oop__list__ = function(values) {
+  for (util in _) {
+    if (typeof _[util] === "function") {
+      this[util] = _.chain ?
+        function() {
+          var returns = [], value;
+          for (var i = 0; i < values.length; i++) {
+            value = values[i];
+            returns.push(_[arguments.callee.util].apply(this, [value].concat(Array.prototype.slice.call(arguments))));
+          }
+          return __(returns);
+        } :
+        function() {
+          var returns = [];
+          for (var i = 0; i < values.length; i++) {
+            value = values[i];
+            returns.push(_[arguments.callee.util].apply(this, [value].concat(Array.prototype.slice.call(arguments))));
+          }
+          return returns;
+        };
+      this[util].util = util;
+    }
+  }
+  if (_.chain) {
+    this.value = values;
+  }
+}
+
 _.mixin = function(types, mixins) {
   if (mixins == null && toString.call(types) !== "[object Array]" && toString.call(types) !== "[object String]") {
     mixins = types;
@@ -86,7 +122,7 @@ _.mixin = function(types, mixins) {
   if (toString.call(types) === "[object String]") {
     types = [types];
   }
-  for (name in mixins) {
+  for (var name in mixins) {
     var mixin = mixins[name];
     if (typeof mixin === "function") {
       for (var i = 0; i < types.length; i++) {
@@ -168,3 +204,4 @@ _.pollute.enable = function() {
 }
 
 exports._ = _;
+exports.__ = __;
