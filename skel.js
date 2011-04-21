@@ -22,6 +22,7 @@ _.ALL = [_.ARRAY, _.OBJECT, _.NUMBER, _.STRING, _.FUNCTION, _.REGEXP];
 
 _.chain = true;
 _.limitToType = false;
+_.fn = {};
 _.types = {
   array: {},
   object: {},
@@ -114,25 +115,40 @@ _.__oop__list__ = function(values) {
   }
 }
 
-_.mixin = function(types, mixins) {
-  if (mixins == null && toString.call(types) !== "[object Array]" && toString.call(types) !== "[object String]") {
-    mixins = types;
-    types = _.ALL;
-  }
-  if (toString.call(types) === "[object String]") {
-    types = [types];
-  }
-  for (var name in mixins) {
-    var mixin = mixins[name];
-    if (typeof mixin === "function") {
-      for (var i = 0; i < types.length; i++) {
-        _.types[types[i]][name] = mixin;
-        if (_.pollute.enabled) _.pollute(types[i], name);
+_.mixin = function() {
+  if (((typeof arguments[0] === "string" || toString.call(arguments[0]) === "[object Array]") && typeof arguments[1] === "object") ||
+  typeof arguments[0] === "object") {
+    var types = arguments[0], mixins = arguments[1];
+    if (mixins == null && toString.call(types) !== "[object Array]" && toString.call(types) !== "[object String]") {
+      mixins = types;
+      types = _.ALL;
+    }
+    if (toString.call(types) === "[object String]") {
+      types = [types];
+    }
+    for (var name in mixins) {
+      var mixin = mixins[name];
+      if (typeof mixin === "function") {
+        for (var i = 0; i < types.length; i++) {
+          _.types[types[i]][name] = mixin;
+          if (_.pollute.enabled) _.pollute(types[i], name);
+        }
+        _.fn[name] = _[name] = mixin;
+        if (_.globalize.enable) global[name] = mixin;
       }
-      _[name] = mixin;
     }
   }
 };
+
+_.globalize = function() {
+  for (var key in _.fn) {
+    if (_.fn.hasOwnProperty(key)) {
+      global[key] = _.fn[key];
+    }
+  }
+  _.globalize.enable = true;
+}
+_.globalize.enable = false;
 
 _.pollute = function(type, name) {
   switch (type) {
