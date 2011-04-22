@@ -16,8 +16,7 @@ in the near future.
 Skel, being in such an early stage of development, is not on npm. To use it, get the skel.js file and drop it
 into your project directory. Then add the following line to include skel.
 
-    var _ = require("./skel")._,
-        __ = require("./skel").__;
+    require("./skel").install("_", "__");
 
 You can change the `_` variable name to suit your preference (the first one, the second has to
 remain an underscore). In this readme, an `_` will be used.
