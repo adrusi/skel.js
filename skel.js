@@ -160,14 +160,14 @@ _.mixin = function() {
         if (_.pollute.enabled) _.pollute(types[i], name);
       }
       _.fn[name] = _[name] = mixin;
-      if (_.globalize.enable) global[name] = mixin;
+      if (_.globalize.enable && global[name] == null) global[name] = mixin;
     }
   }
 };
 
 _.globalize = function() {
   for (var key in _.fn) {
-    if (_.fn.hasOwnProperty(key)) {
+    if (_.fn.hasOwnProperty(key) && global[key] == null) {
       global[key] = _.fn[key];
     }
   }
@@ -178,34 +178,46 @@ _.globalize.enable = false;
 _.pollute = function(type, name) {
   switch (type) {
     case "object":
-      Object.prototype[name] = function() {
-        return _.types.object[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
-      };
+      if (typeof Object.prototype[name] !== "function") {
+        Object.prototype[name] = function() {
+          return _.types.object[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
+        };
+      }
       break;
     case "array":
-      Array.prototype[name] = function() {
-        return _.types.array[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
-      };
+      if (typeof Array.prototype[name] !== "function") {
+        Array.prototype[name] = function() {
+          return _.types.array[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
+        };
+      }
       break;
     case "number":
-      Number.prototype[name] = function() {
-        return _.types.number[name].apply(this, [this.valueOf()].concat(Array.prototype.slice.call(arguments)));
-      };
+      if (typeof Number.prototype[name] !== "function") {
+        Number.prototype[name] = function() {
+          return _.types.number[name].apply(this, [this.valueOf()].concat(Array.prototype.slice.call(arguments)));
+        };
+      }
       break;
     case "string":
-      String.prototype[name] = function() {
-        return _.types.string[name].apply(this, [this.valueOf()].concat(Array.prototype.slice.call(arguments)));
-      };
+      if (typeof String.prototype[name] !== "function") {
+        String.prototype[name] = function() {
+          return _.types.string[name].apply(this, [this.valueOf()].concat(Array.prototype.slice.call(arguments)));
+        };
+      }
       break;
     case "fn":
-      Function.prototype[name] = function() {
-        return _.types.fn[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
-      };
+      if (typeof Function.prototype[name] !== "function") {
+        Function.prototype[name] = function() {
+          return _.types.fn[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
+        };
+      }
       break;
     case "regexp":
-      RegExp.prototype[name] = function() {
-        return _.types.regexp[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
-      };
+      if (typeof RegExp.prototype[name] !== "function") {
+        RegExp.prototype[name] = function() {
+          return _.types.regexp[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
+        };
+      }
       break;
   }
 }
@@ -213,34 +225,46 @@ _.pollute.enabled = false;
 _.pollute.enable = function() {
   _.pollute.enabled = true;
   for (name in _.types.object) {
-    Object.prototype[name] = function() {
-      return _.types.object[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
-    };
+    if (typeof Object.prototype[name] !== "function") {
+      Object.prototype[name] = function() {
+        return _.types.object[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
+      };
+    }
   }
   for (name in _.types.array) {
-    Array.prototype[name] = function() {
-      return _.types.array[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
-    };
+    if (typeof Array.prototype[name] !== "function") {
+      Array.prototype[name] = function() {
+        return _.types.array[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
+      };
+    }
   }
   for (name in _.types.number) {
-    Number.prototype[name] = function() {
-      return _.types.number[name].apply(this, [this.valueOf()].concat(Array.prototype.slice.call(arguments)));
-    };
+    if (typeof Number.prototype[name] !== "function") {
+      Number.prototype[name] = function() {
+        return _.types.number[name].apply(this, [this.valueOf()].concat(Array.prototype.slice.call(arguments)));
+      };
+    }
   }
   for (name in _.types.string) {
-    String.prototype[name] = function() {
-      return _.types.string[name].apply(this, [this.valueOf()].concat(Array.prototype.slice.call(arguments)));
-    };
+    if (typeof String.prototype[name] !== "function") {
+      String.prototype[name] = function() {
+        return _.types.string[name].apply(this, [this.valueOf()].concat(Array.prototype.slice.call(arguments)));
+      };
+    }
   }
   for (name in _.types.fn) {
-    Function.prototype[name] = function() {
-      return _.types.fn[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
-    };
+    if (typeof Function.prototype[name] !== "function") {
+      Function.prototype[name] = function() {
+        return _.types.fn[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
+      };
+    }
   }
   for (name in _.types.regex) {
-    RegExp.prototype[name] = function() {
-      return _.types.regexp[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
-    };
+    if (typeof RegExp.prototype[name] !== "function") {
+      RegExp.prototype[name] = function() {
+        return _.types.regexp[name].apply(this, [this].concat(Array.prototype.slice.call(arguments)));
+      };
+    }
   }
 }
 

@@ -16,32 +16,21 @@
 require("skel").install("_", "__");
 _.mixin(_.STRING, [
   function echo() {
-    console.log([].slice.call(arguments));
+    var str = "", i;
+    for (i = 0; i < arguments.length; i++) {
+      str += arguments[i];
+    }
+    console.log(str);
     return arguments[0];
   },
   function capitalize(string) {
-    return string.toUpper();
+    var arr = string.split(/\b/);
+    for (var i = 0; i < arr.length; i++) {
+      arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1);
+    }
+    return arr.join("");
   }
 ]);
-// _.mixin(_.STRING, function echo() {
-//   console.log([].slice.call(arguments));
-//   return arguments[0];
-// });
-// 
-// _.mixin(_.STRING, function capitalize(string) {
-//   return string.toUpper();
-// });
-// _.mixin(_.STRING, {
-//   echo: function() {
-//     console.log([].slice.call(arguments));
-//     return arguments[0];
-//   }
-// });
-// 
-// _.mixin(_.STRING, {
-//   capitalize: function(string) {
-//     return string.toUpper();
-//   }
-// });
-//_.echo(_.capitalize("foo"));
-console.log(_.echo);
+_.globalize();
+_("foo bar").capitalize().echo(" is \"foo bar\" capitalized");
+echo(capitalize("foo bar"), " is \"foo bar\" capitalized");
