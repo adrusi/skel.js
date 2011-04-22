@@ -72,13 +72,18 @@ _.__oop__ = function(value) {
     for (util in _) {
       if (typeof _[util] === "function") {
         this[util] = _.chain ?
-          function() {
-            return _(_[arguments.callee.util].apply(this, [value].concat(Array.prototype.slice.call(arguments))));
-          } :
-          function() {
-            return _[arguments.callee.util].apply(this, [value].concat(Array.prototype.slice.call(arguments)));
-          };
-        this[util].util = util;
+          (function() {
+            var _util = util;
+            return function() {
+              return _(_[_util].apply(this, [value].concat(Array.prototype.slice.call(arguments))));
+            }
+          }()) :
+          (function() {
+            var _util = util;
+            return function() {
+              return _[_util].apply(this, [value].concat(Array.prototype.slice.call(arguments)));
+            }
+          }());
       }
     }
     if (_.chain) {
@@ -91,23 +96,28 @@ _.__oop__list__ = function(values) {
   for (util in _) {
     if (typeof _[util] === "function") {
       this[util] = _.chain ?
-        function() {
-          var returns = [], value;
-          for (var i = 0; i < values.length; i++) {
-            value = values[i];
-            returns.push(_[arguments.callee.util].apply(this, [value].concat(Array.prototype.slice.call(arguments))));
-          }
-          return __(returns);
-        } :
-        function() {
-          var returns = [];
-          for (var i = 0; i < values.length; i++) {
-            value = values[i];
-            returns.push(_[arguments.callee.util].apply(this, [value].concat(Array.prototype.slice.call(arguments))));
-          }
-          return returns;
-        };
-      this[util].util = util;
+        (function() {
+          var _util = util;
+          return function() { 
+            var returns = [], value;
+            for (var i = 0; i < values.length; i++) {
+              value = values[i];
+              returns.push(_[_util].apply(this, [value].concat(Array.prototype.slice.call(arguments))));
+            }
+            return __(returns);
+          };
+        }()) :
+        (function() {
+          var _util = util;
+          return function() {
+            var returns = [];
+            for (var i = 0; i < values.length; i++) {
+              value = values[i];
+              returns.push(_[_util].apply(this, [value].concat(Array.prototype.slice.call(arguments))));
+            }
+            return returns;
+          };
+        }());
     }
   }
   if (_.chain) {
