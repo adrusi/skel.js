@@ -1,4 +1,4 @@
-# skel.js
+# Skel.js :: Version 0.1 &rarr; Ossicles
 Skel is a backbone (think **skel**eton) for building javascript libraries. While skel itself does not include
 any practical utilities, it exposes an extremely flexible API for building libraries upon. Skel supports 3
 different coding styles. Functional, object oriented, and prototypical. Both the functional and object oriented
@@ -6,12 +6,11 @@ styles are enabled by default. The prototypical (extending the native prototypes
 as to not pollute the prototypes of coders who don't want the polluted.
 
 ## Disclaimer
-Skel's version is currently something like 0.0.0.0.0.0.0.1, and needs a ton more vital features before it's
-ready. These features include things like a `noConflict` method and other features one would expect for a
-library backbone.
+Skel is still very young and may still be very buggy. I've done my best to test for all possible errors, but I cannot make any
+guarantees about its stability.
 
-Also, Skel is currently only formatted for commonjs, though only a few lines need to be changed to make it
-browser compatible.
+Also, Skel is currently only commonjs ready. It will not work on the client, and this functionality is not planned for addition
+in the near future.
 
 ## Requiring skel
 Skel, being in such an early stage of development, is not on npm. To use it, get the skel.js file and drop it
@@ -156,6 +155,7 @@ Skel has numerous options for customization. I've mentioned some already, but he
  * Disable method chaining in OO style: `_.chain = false;`
  * Make methods only work for the specified types in OO style: `_.limitToType = true;`
  * Enable prototypical style: `_.pollute.enable();`
+ * Add all mixins to global namespace for easier use of functional style: `_.globalize();`
 
 ## Appendix I: data types
  * `_.ARRAY`
@@ -165,3 +165,25 @@ Skel has numerous options for customization. I've mentioned some already, but he
  * `_.FUNCTION`
  * `_.REGEXP`
  * `_.ALL`
+ 
+## Appendix II: defining mixins
+Apart from the way of defining mixins shown above, you can also define them via named functions:
+
+    _.mixin(_.STRING, function echo(str1, str2) {
+        console.log(str1, str2);
+    });
+
+Or as an array of named functions:
+
+    _.mixin(_.STRING, [
+        function echo(str1, str2) {
+            console.log(str1, str2);
+            return str1;
+        },
+        function toUpperCase(string) {
+            return string.toUpperCase();
+        }
+    ]);
+
+This convention may become the encouraged version. It is intended to lower the already low learning curve by making mixin
+declaration appear more like simple function definitions.
