@@ -116,26 +116,51 @@ _.__oop__list__ = function(values) {
 }
 
 _.mixin = function() {
-  if (((typeof arguments[0] === "string" || toString.call(arguments[0]) === "[object Array]") && typeof arguments[1] === "object") ||
-  typeof arguments[0] === "object") {
-    var types = arguments[0], mixins = arguments[1];
-    if (mixins == null && toString.call(types) !== "[object Array]" && toString.call(types) !== "[object String]") {
-      mixins = types;
-      types = _.ALL;
-    }
-    if (toString.call(types) === "[object String]") {
-      types = [types];
-    }
-    for (var name in mixins) {
-      var mixin = mixins[name];
-      if (typeof mixin === "function") {
-        for (var i = 0; i < types.length; i++) {
-          _.types[types[i]][name] = mixin;
-          if (_.pollute.enabled) _.pollute(types[i], name);
+  var args = [].slice.call(arguments);
+  for (var i = 0; i < args.length; i++) {
+    if (toString.call(args[i]) === "[object Array]") {
+      var fnArray = true;
+      for (var j = 0; j < args[i].length; j++) {
+        if (typeof args[i][j] !== "function" || args[i][j].name == null) {
+          fnArray = false;
+          break;
         }
-        _.fn[name] = _[name] = mixin;
-        if (_.globalize.enable) global[name] = mixin;
       }
+      if (fnArray) {
+        var obj = {};
+        for (var j = 0; j < args[i].length; j++) {
+          obj[args[i][j].name] = args[i][j];
+        }
+        args[i] = obj;
+        _.mixin.apply(this, args);
+        return;
+      }
+    }
+    else if (typeof args[i] === "function" && args[i].name != null) {
+      var obj = {};
+      obj[args[i].name] = args[i];
+      args[i] = obj;
+      _.mixin.apply(this, args);
+      return;
+    }
+  }
+  var types = args[0], mixins = args[1];
+  if (mixins == null && toString.call(types) !== "[object Array]" && toString.call(types) !== "[object String]") {
+    mixins = types;
+    types = _.ALL;
+  }
+  if (toString.call(types) === "[object String]") {
+    types = [types];
+  }
+  for (var name in mixins) {
+    var mixin = mixins[name];
+    if (typeof mixin === "function") {
+      for (var i = 0; i < types.length; i++) {
+        _.types[types[i]][name] = mixin;
+        if (_.pollute.enabled) _.pollute(types[i], name);
+      }
+      _.fn[name] = _[name] = mixin;
+      if (_.globalize.enable) global[name] = mixin;
     }
   }
 };
