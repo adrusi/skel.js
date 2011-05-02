@@ -9,8 +9,8 @@ as to not pollute the prototypes of coders who don't want the polluted.
 Skel is still very young and may still be very buggy. I've done my best to test for all possible errors, but I cannot make any
 guarantees about its stability.
 
-Also, Skel is currently only commonjs ready. It will not work on the client, and this functionality is not planned for addition
-in the near future.
+There is experimental support for skel in the browser. Judging by the tests in `browser-test.html`, `browser-skel.js` works in all
+versions of Firefox and Chrome, and in Safari 4+. In the future, more browsers will be supported.
 
 ## Requiring skel
 Skel, being in such an early stage of development, is not on npm. To use it, get the skel.js file and drop it

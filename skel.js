@@ -10,7 +10,7 @@ __ = function() {
   var args = (arguments.length === 1 && toString.call(arguments[0]) === "[object Array]") ?
         arguments[0] : Array.prototype.slice.call(arguments);
   return new _.__oop__list__(args);
-}
+};
 
 _.ARRAY = "array";
 _.OBJECT = "object";

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>skel</title>
+  </head>
+  <body>
+    <script src="browser-skel.js"></script>
+    <script>
+      installSkel("_", "__");
+      document.body = (document.body || document.getElementsByTagName("body")[0]);
+      _.mixin(function echo() {
+        document.body.innerHTML = document.body.innerHTML  + [].slice.call(arguments).join(", ") + "<br />";
+        return arguments[0];
+      });
+      onload = function() {
+        _("Hello").echo("world!").echo("skel!");
+        __("Hello", "Goodbye").echo("skel!");
+      };
+    </script>
+  </body>
+</html>
